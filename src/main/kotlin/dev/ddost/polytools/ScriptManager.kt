@@ -11,5 +11,7 @@ object ScriptManager {
         Base64DecodeToolScript,
         ConvertJsonToYamlScript,
         ConvertYamlToJsonScript,
+        UrlEncodeScript,
+        UrlDecodeScript,
     ).sortedBy { it.name }
 }
