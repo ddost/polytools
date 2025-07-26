@@ -6,12 +6,12 @@ import com.google.gson.JsonParser
 object JsonFormatScript : PolyToolScript {
     override val name: String = "JSON: Format"
     private val gson = GsonBuilder().setPrettyPrinting().create()
-    override fun execute(input: String): ScriptResult {
+    override fun execute(input: String): ActionResult {
         return try {
             val jsonElement = JsonParser.parseString(input)
-            ScriptResult.Success(gson.toJson(jsonElement)) // Оборачиваем в Success
+            ActionResult.ReplaceText(gson.toJson(jsonElement))
         } catch (e: Exception) {
-            ScriptResult.Failure("Invalid JSON: ${e.message}") // Оборачиваем в Failure
+            ActionResult.Error("Invalid JSON: ${e.message}")
         }
     }
 }

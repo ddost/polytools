@@ -7,8 +7,6 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <name>PolyTools</name>
 
-    <version>1.0.1</version>
-
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor url="https://ddost.dev">mrDDosT</vendor>
 

@@ -2,5 +2,5 @@ package dev.ddost.polytools
 
 interface PolyToolScript {
     val name: String
-    fun execute(input: String): ScriptResult
+    fun execute(input: String): ActionResult
 }

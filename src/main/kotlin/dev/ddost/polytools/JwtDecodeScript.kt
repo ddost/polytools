@@ -3,24 +3,40 @@ package dev.ddost.polytools
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.JwtException
 import java.util.Base64
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import io.jsonwebtoken.io.Decoders
+import java.nio.charset.StandardCharsets
 
 object JwtDecodeScript : PolyToolScript {
     override val name: String = "JWT: Decode"
-    override fun execute(input: String): ScriptResult {
-        try {
-            val jwt = input.substringBeforeLast('.') + "." // Убираем подпись для парсинга
-            val parsedJwt = Jwts.parserBuilder().build().parseClaimsJwt(jwt)
-            val header = parsedJwt.header.map { "${it.key}: ${it.value}" }.joinToString("\n")
-            val payload = parsedJwt.body.map { "${it.key}: ${it.value}" }.joinToString("\n")
+    private val gson = GsonBuilder().setPrettyPrinting().create()
 
-            // Для красивого вывода можно отформатировать как JSON
-            // (Это потребует Gson/Jackson, которые у нас уже могут быть)
-            // Для простоты пока так:
-            return ScriptResult.Success("--- HEADER ---\n$header\n\n--- PAYLOAD ---\n$payload")
+    override fun execute(input: String): ActionResult {
+        return try {
+            val parts = input.split('.')
+            if (parts.size < 2) return ActionResult.Error("Invalid JWT: not enough parts.")
+            val headerJson = decodePart(parts[0])
+            val payloadJson = decodePart(parts[1])
+            val formattedResult = listOf(
+                "--- HEADER ---",
+                headerJson,
+                "--- PAYLOAD ---",
+                payloadJson
+            ).joinToString("\n\n")
+            // Возвращаем приказ "показать всплывающее окно"!
+            ActionResult.ShowPopup("JWT Decoded", formattedResult)
         } catch (e: JwtException) {
-            return ScriptResult.Failure("Invalid JWT: ${e.message}")
+            ActionResult.Error("Invalid JWT: ${e.message}")
         } catch (e: Exception) {
-            return ScriptResult.Failure("Error decoding JWT: ${e.message}")
+            ActionResult.Error("Error decoding JWT: ${e.message}")
         }
+    }
+
+    private fun decodePart(part: String): String {
+        val decodedBytes = Decoders.BASE64URL.decode(part)
+        val jsonString = String(decodedBytes, StandardCharsets.UTF_8)
+        // Форматируем JSON для красивого вывода
+        return gson.toJson(JsonParser.parseString(jsonString))
     }
 }

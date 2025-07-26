@@ -9,5 +9,7 @@ object ScriptManager {
         HashScript("SHA-256"),
         Base64EncodeToolScript,
         Base64DecodeToolScript,
+        ConvertJsonToYamlScript,
+        ConvertYamlToJsonScript,
     ).sortedBy { it.name }
 }

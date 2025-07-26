@@ -6,6 +6,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
+import com.intellij.ui.components.JBScrollPane
+import java.awt.Dimension
+import javax.swing.JTextArea
 
 class PolyToolsAction: AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -18,20 +21,21 @@ class PolyToolsAction: AnAction() {
         val scripts = ScriptManager.allScripts
 
         val step = PolyToolsScriptPopupStep("Choose Action", scripts) { selectedScript ->
-            val scriptResult = selectedScript.execute(selectedText)
-
-            when (scriptResult) {
-                is ScriptResult.Success -> {
+            val actionResult = selectedScript.execute(selectedText)
+            when (actionResult) {
+                is ActionResult.ReplaceText -> {
                     WriteCommandAction.runWriteCommandAction(project) {
-                        val selectionStart = editor.selectionModel.selectionStart
-                        val selectionEnd = editor.selectionModel.selectionEnd
-                        editor.document.replaceString(selectionStart, selectionEnd, scriptResult.value)
+                        val selection = editor.selectionModel
+                        editor.document.replaceString(selection.selectionStart, selection.selectionEnd, actionResult.value)
                     }
                 }
-                is ScriptResult.Failure -> {
+                is ActionResult.ShowPopup -> {
+                    showResultInPopup(editor, actionResult.title, actionResult.content)
+                }
+                is ActionResult.Error -> {
                     NotificationGroupManager.getInstance()
-                        .getNotificationGroup("PolyTools Notifications") // Используем ID из plugin.xml
-                        .createNotification("PolyTools script error", scriptResult.message, NotificationType.ERROR)
+                        .getNotificationGroup("PolyTools Notifications")
+                        .createNotification("PolyTools error", actionResult.message, NotificationType.ERROR)
                         .notify(project)
                 }
             }
@@ -44,5 +48,23 @@ class PolyToolsAction: AnAction() {
     override fun update(e: AnActionEvent) {
         val editor = e.getData(CommonDataKeys.EDITOR)
         e.presentation.isEnabledAndVisible = editor?.selectionModel?.hasSelection() == true
+    }
+
+    private fun showResultInPopup(editor: Editor, title: String, content: String) {
+        val textArea = JTextArea(content).apply {
+            isEditable = false
+            lineWrap = true
+            wrapStyleWord = true
+        }
+        val scrollPane = JBScrollPane(textArea)
+        JBPopupFactory.getInstance()
+            .createComponentPopupBuilder(scrollPane, textArea)
+            .setTitle(title)
+            .setResizable(true)
+            .setMovable(true)
+            .setRequestFocus(true)
+            .setMinSize(Dimension(600, 400))
+            .createPopup()
+            .showInCenterOf(editor.component)
     }
 }

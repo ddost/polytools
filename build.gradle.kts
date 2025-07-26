@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.ddost"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -28,6 +28,8 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("com.google.code.gson:gson:2.9.1")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
 }
 
 intellijPlatform {
