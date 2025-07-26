@@ -1,0 +1,52 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>dev.ddost.polytools</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>PolyTools</name>
+
+    <version>1.0.1</version>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor url="https://ddost.dev">mrDDosT</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+      <h1>PolyTools for OpenIDE</h1>
+      <p>A collection of useful developer utilities inspired by the Boop app for macOS.</p>
+      <p>Select text, press <b>Cmd+Alt+P</b> (or <b>Ctrl+Alt+P</b>), and choose a script to run:</p>
+      <ul>
+        <li>JSON Formatting</li>
+        <li>Base64 Encode/Decode</li>
+        <li>JWT Decode</li>
+        <li>Hash calculation (MD5, SHA-1, SHA-256)</li>
+        <li>And more!</li>
+      </ul>
+    ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <actions>
+        <action id="dev.ddost.polytools.PolyToolsAction"
+                class="dev.ddost.polytools.PolyToolsAction"
+                text="PolyTools: Transform Selection..."
+                description="Run a PolyTools script on the selected text.">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt P"/>
+            <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt P"/>
+        </action>
+    </actions>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="PolyTools Notifications"
+                           displayType="BALLOON"
+                           isLogByDefault="true"/>
+    </extensions>
+</idea-plugin>
